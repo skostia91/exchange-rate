@@ -2,6 +2,8 @@ package by.shylau.currenciesexchange.controller;
 
 import by.shylau.currenciesexchange.dto.ExchangeRateDTOResponce;
 import by.shylau.currenciesexchange.dto.ExchangeRateDTORequest;
+import by.shylau.currenciesexchange.model.Currencie;
+import by.shylau.currenciesexchange.model.ExchangeRate;
 import by.shylau.currenciesexchange.service.CurrenciesService;
 import by.shylau.currenciesexchange.service.ExchangeRatesService;
 import by.shylau.currenciesexchange.service.FactoryService;
@@ -38,16 +40,11 @@ public class ExchangeRateController {
     }
 
     @PostMapping("/exchangeRates")
-    public ExchangeRateDTORequest addExchangeRateList(
-            //@RequestBody
-            ExchangeRateDTOResponce exchangeRateDTOResponce) {//добавить валидацию
-        System.err.println(exchangeRateDTOResponce);
+    public ExchangeRateDTORequest addExchangeRateList(ExchangeRateDTOResponce exchangeRateDTOResponce) {//добавить валидацию
+        exchangeRatesService.add(factoryService.convertExchangeDTOIntoExchange(exchangeRateDTOResponce));
 
-//        currenciesService.addEchangeRate(currencie);
+        int size = factoryService.getDTO(exchangeRatesService.getAllExchangeRates()).size();
 
-        return null;
-
-
+        return factoryService.getDTO(exchangeRatesService.getAllExchangeRates()).get(size - 1);
     }
-
 }

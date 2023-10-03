@@ -2,6 +2,7 @@ package by.shylau.currenciesexchange.service;
 
 import by.shylau.currenciesexchange.dto.CurrencyDTOResponce;
 import by.shylau.currenciesexchange.dto.ExchangeRateDTORequest;
+import by.shylau.currenciesexchange.dto.ExchangeRateDTOResponce;
 import by.shylau.currenciesexchange.model.Currencie;
 import by.shylau.currenciesexchange.model.ExchangeRate;
 import lombok.extern.slf4j.Slf4j;
@@ -66,5 +67,19 @@ public class FactoryService {
         currencie.setSign(currencyDTO.getSign());
 
         return currencie;
+    }
+
+
+    public ExchangeRate convertExchangeDTOIntoExchange(ExchangeRateDTOResponce exchangeRateDTOResponce) {
+
+    int base = currenciesService.findByCode(exchangeRateDTOResponce.getBaseCurrencyId()).getId();
+    int target = currenciesService.findByCode(exchangeRateDTOResponce.getTargetCurrencyId()).getId();
+
+    double rate = exchangeRateDTOResponce.getRate();
+    var exchangeRate = new ExchangeRate();
+        exchangeRate.setBaseCurrencyId(base);
+        exchangeRate.setTargetCurrencyId(target);
+        exchangeRate.setRate(rate);
+    return exchangeRate;
     }
 }

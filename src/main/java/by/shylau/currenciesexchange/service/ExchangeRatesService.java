@@ -23,4 +23,8 @@ public class ExchangeRatesService {
     public ExchangeRate getExchangeRate(int base, int target) {
         return exchangeRatesRepository.findByBaseCurrencyIdAndAndTargetCurrencyId(base, target);
     }
+
+    public void add(ExchangeRate exchangeRate) {
+        exchangeRatesRepository.save(exchangeRate);
+    }
 }
