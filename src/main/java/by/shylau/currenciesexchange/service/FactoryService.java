@@ -1,6 +1,8 @@
 package by.shylau.currenciesexchange.service;
 
+import by.shylau.currenciesexchange.dto.CurrencyDTOResponce;
 import by.shylau.currenciesexchange.dto.ExchangeRateDTORequest;
+import by.shylau.currenciesexchange.model.Currencie;
 import by.shylau.currenciesexchange.model.ExchangeRate;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -55,5 +57,14 @@ public class FactoryService {
         String targetCurrency = getConvertStringTargetCode(code);
 
         return currenciesService.findByCode(targetCurrency).getId();
+    }
+
+    public Currencie convertCurrencyDTOIntoCurrency(CurrencyDTOResponce currencyDTO) {
+        var currencie = new Currencie();
+        currencie.setCode(currencyDTO.getCode());
+        currencie.setName(currencyDTO.getName());
+        currencie.setSign(currencyDTO.getSign());
+
+        return currencie;
     }
 }

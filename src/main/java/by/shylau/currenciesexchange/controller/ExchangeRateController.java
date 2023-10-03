@@ -23,12 +23,14 @@ public class ExchangeRateController {
         this.currenciesService = currenciesService;
     }
 
+    //работает, не трогай
     @GetMapping("/exchangeRates")
     public List<ExchangeRateDTORequest> getExchangeRateList() {
         return factoryService.getDTO(exchangeRatesService.getAllExchangeRates());
     }
 
-    @GetMapping("/exchangeRate/{rate}")
+    //работает, не трогай
+    @GetMapping("/exchangeRates/{rate}")
     public ExchangeRateDTORequest getRate(@PathVariable("rate") String code) {
 
         return factoryService.converterExchangeRateIntoExchangeRateDTO(exchangeRatesService.getExchangeRate(
@@ -36,7 +38,9 @@ public class ExchangeRateController {
     }
 
     @PostMapping("/exchangeRates")
-    public ExchangeRateDTORequest addExchangeRateList(@RequestBody ExchangeRateDTOResponce exchangeRateDTOResponce) {//добавить валидацию
+    public ExchangeRateDTORequest addExchangeRateList(
+            //@RequestBody
+            ExchangeRateDTOResponce exchangeRateDTOResponce) {//добавить валидацию
         System.err.println(exchangeRateDTOResponce);
 
 //        currenciesService.addEchangeRate(currencie);

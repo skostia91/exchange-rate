@@ -1,7 +1,9 @@
 package by.shylau.currenciesexchange.controller;
 
+import by.shylau.currenciesexchange.dto.CurrencyDTOResponce;
 import by.shylau.currenciesexchange.model.Currencie;
 import by.shylau.currenciesexchange.service.CurrenciesService;
+import by.shylau.currenciesexchange.service.FactoryService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -13,10 +15,12 @@ import java.util.List;
 @RequestMapping("/currencies")
 public class CurrenciesController {
     private CurrenciesService currenciesService;
+    private FactoryService factoryService;
 
     @Autowired
-    public CurrenciesController(CurrenciesService currenciesService) {
+    public CurrenciesController(CurrenciesService currenciesService, FactoryService factoryService) {
         this.currenciesService = currenciesService;
+        this.factoryService = factoryService;
     }
 
     @GetMapping()
@@ -24,9 +28,11 @@ public class CurrenciesController {
         return currenciesService.findAll();
     }
 
-    @PostMapping()
-    public void addCurrencies(@RequestBody Currencie currencie) {//добавить @Valid
-            currenciesService.addCurrencies(currencie);
+    @PostMapping()//работает, не трогай
+    public Currencie addCurrencies(CurrencyDTOResponce currencieDTO) {//добавить @Valid
+        currenciesService.addCurrencies(factoryService.convertCurrencyDTOIntoCurrency(currencieDTO));
+
+        return currenciesService.findById(currenciesService.findAll().size());
     }
 
     @GetMapping("/{id}")
