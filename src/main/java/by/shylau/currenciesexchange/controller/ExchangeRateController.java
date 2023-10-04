@@ -2,8 +2,6 @@ package by.shylau.currenciesexchange.controller;
 
 import by.shylau.currenciesexchange.dto.ExchangeRateDTOResponce;
 import by.shylau.currenciesexchange.dto.ExchangeRateDTORequest;
-import by.shylau.currenciesexchange.model.Currencie;
-import by.shylau.currenciesexchange.model.ExchangeRate;
 import by.shylau.currenciesexchange.service.CurrenciesService;
 import by.shylau.currenciesexchange.service.ExchangeRatesService;
 import by.shylau.currenciesexchange.service.FactoryService;
@@ -40,11 +38,23 @@ public class ExchangeRateController {
     }
 
     @PostMapping("/exchangeRates")
-    public ExchangeRateDTORequest addExchangeRateList(ExchangeRateDTOResponce exchangeRateDTOResponce) {//добавить валидацию
+    public ExchangeRateDTORequest addExchangeRate(ExchangeRateDTOResponce exchangeRateDTOResponce) {//добавить валидацию
         exchangeRatesService.add(factoryService.convertExchangeDTOIntoExchange(exchangeRateDTOResponce));
+        return getLastElementIntoDB();
+    }
 
+    @PatchMapping("/exchangeRates/{code}")
+    public ExchangeRateDTORequest updateExchangeRate(@PathVariable("code") String code, double rate) {//добавить валидацию
+        var exchangeRate = exchangeRatesService.getExchangeRate(
+                factoryService.convertBaseId(code), factoryService.convertTargetId(code));
+        exchangeRate.setRate(rate);
+        exchangeRatesService.add(exchangeRate);
+        return getLastElementIntoDB();
+    }
+
+    public ExchangeRateDTORequest getLastElementIntoDB() {
         int size = factoryService.getDTO(exchangeRatesService.getAllExchangeRates()).size();
-
         return factoryService.getDTO(exchangeRatesService.getAllExchangeRates()).get(size - 1);
     }
+
 }
