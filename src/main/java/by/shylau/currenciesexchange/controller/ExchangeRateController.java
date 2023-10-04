@@ -1,5 +1,6 @@
 package by.shylau.currenciesexchange.controller;
 
+import by.shylau.currenciesexchange.dto.ExchangeAmountDTO;
 import by.shylau.currenciesexchange.dto.ExchangeRateDTOResponce;
 import by.shylau.currenciesexchange.dto.ExchangeRateDTORequest;
 import by.shylau.currenciesexchange.service.CurrenciesService;
@@ -30,7 +31,7 @@ public class ExchangeRateController {
     }
 
     //работает, не трогай
-    @GetMapping("/exchangeRates/{rate}")
+    @GetMapping("/exchangeRate/{rate}")
     public ExchangeRateDTORequest getRate(@PathVariable("rate") String code) {
 
         return factoryService.converterExchangeRateIntoExchangeRateDTO(exchangeRatesService.getExchangeRate(
@@ -43,7 +44,7 @@ public class ExchangeRateController {
         return getLastElementIntoDB();
     }
 
-    @PatchMapping("/exchangeRates/{code}")
+    @PatchMapping("/exchangeRate/{code}")
     public ExchangeRateDTORequest updateExchangeRate(@PathVariable("code") String code, double rate) {//добавить валидацию
         var exchangeRate = exchangeRatesService.getExchangeRate(
                 factoryService.convertBaseId(code), factoryService.convertTargetId(code));
@@ -57,4 +58,22 @@ public class ExchangeRateController {
         return factoryService.getDTO(exchangeRatesService.getAllExchangeRates()).get(size - 1);
     }
 
+    @GetMapping("/exchange")
+    public ExchangeAmountDTO getLastElementIntoDB(@RequestParam("from") String from,
+                                                       @RequestParam("to") String to,
+                                                       @RequestParam("amount") double amount) {
+
+        double rate = exchangeRatesService.getExchangeRate(currenciesService.findByCode(from).getId(),
+                currenciesService.findByCode(to).getId()).getRate();
+
+        System.err.println(rate * amount);
+
+        return new ExchangeAmountDTO(
+                currenciesService.findByCode(from),
+                currenciesService.findByCode(to),
+                rate,
+                amount,
+                rate * amount
+        );
+    }
 }
