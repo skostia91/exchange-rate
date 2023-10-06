@@ -15,5 +15,5 @@ public class ExchangeAmountDTO {
     private Currencie target;
     private double rate;
     private double amount;
-    private double convertedAmount;
+    private String convertedAmount;
 }

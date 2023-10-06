@@ -4,6 +4,7 @@ import by.shylau.currenciesexchange.dto.ExchangeAmountDTO;
 import by.shylau.currenciesexchange.dto.ExchangeRateDTOResponce;
 import by.shylau.currenciesexchange.dto.ExchangeRateDTORequest;
 import by.shylau.currenciesexchange.exception.BadRequestException;
+import by.shylau.currenciesexchange.exception.ConflictException;
 import by.shylau.currenciesexchange.exception.NotFoundException;
 import by.shylau.currenciesexchange.service.CurrenciesService;
 import by.shylau.currenciesexchange.service.ExchangeRatesService;
@@ -22,7 +23,8 @@ public class ExchangeRateController {
     private final CurrenciesService currenciesService;
 
     @Autowired
-    public ExchangeRateController(ExchangeRatesService exchangeRatesService, FactoryService factoryService, CurrenciesService currenciesService) {
+    public ExchangeRateController(ExchangeRatesService exchangeRatesService, FactoryService factoryService,
+                                  CurrenciesService currenciesService) {
         this.exchangeRatesService = exchangeRatesService;
         this.factoryService = factoryService;
         this.currenciesService = currenciesService;
@@ -35,16 +37,30 @@ public class ExchangeRateController {
 
     @GetMapping("/exchangeRate/{rate}")
     public ResponseEntity<ExchangeRateDTORequest> getRate(@PathVariable("rate") String code) {
-        return new ResponseEntity<>(factoryService.converterExchangeRateIntoExchangeRateDTO(exchangeRatesService.getExchangeRate(
-                        factoryService.convertBaseId(code), factoryService.convertTargetId(code))), HttpStatus.OK);
+        if (code == null) {
+            throw new BadRequestException("не корректно введены данные");
+        }
+
+        if (exchangeRatesService.getExchangeRate(factoryService.convertBaseId(code),
+                factoryService.convertTargetId(code)) == null) {
+            throw new NotFoundException("не найден обменный курс");
+        }
+
+        return new ResponseEntity<>(factoryService.converterExchangeRateIntoExchangeRateDTO(
+                exchangeRatesService.getExchangeRate(factoryService.convertBaseId(code),
+                        factoryService.convertTargetId(code))), HttpStatus.OK);
     }
 
     @PostMapping("/exchangeRates")
-    public ResponseEntity<ExchangeRateDTORequest> addExchangeRate(ExchangeRateDTOResponce exchangeRateDTOResponce) {//добавить валидацию
+    public ResponseEntity<ExchangeRateDTORequest> addExchangeRate(ExchangeRateDTOResponce exchangeRateDTOResponce) {
         if(exchangeRateDTOResponce.getBaseCurrencyId() == null ||
                 exchangeRateDTOResponce.getTargetCurrencyId() == null ||
                 exchangeRateDTOResponce.getRate() == 0) {
             throw new BadRequestException("не корректно заполнены поля");
+        }
+        if (currenciesService.findByCode(exchangeRateDTOResponce.getBaseCurrencyId()) != null
+        && currenciesService.findByCode(exchangeRateDTOResponce.getTargetCurrencyId()) != null) {
+            throw new ConflictException("валюта с таким кодом уже существует");
         }
 
         exchangeRatesService.add(factoryService.convertExchangeDTOIntoExchange(exchangeRateDTOResponce));
@@ -86,7 +102,7 @@ public class ExchangeRateController {
                 currenciesService.findByCode(to),
                 rate,
                 amount,
-                rate * amount);
+                factoryService.converter(rate * amount));
     }
 
     public ExchangeRateDTORequest getLastElementIntoDB() {

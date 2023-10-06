@@ -8,9 +8,9 @@ import lombok.*;
 @Setter
 @ToString
 public class ExchangeRateDTOResponce {
-    private String baseCurrencyId;//уникальный
+    private String baseCurrencyId;
 
-    private String targetCurrencyId;//уникальный
+    private String targetCurrencyId;
 
     private Double rate;
 }

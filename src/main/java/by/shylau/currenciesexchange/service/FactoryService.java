@@ -3,6 +3,7 @@ package by.shylau.currenciesexchange.service;
 import by.shylau.currenciesexchange.dto.CurrencyDTOResponce;
 import by.shylau.currenciesexchange.dto.ExchangeRateDTORequest;
 import by.shylau.currenciesexchange.dto.ExchangeRateDTOResponce;
+import by.shylau.currenciesexchange.exception.BadRequestException;
 import by.shylau.currenciesexchange.model.Currencie;
 import by.shylau.currenciesexchange.model.ExchangeRate;
 import lombok.extern.slf4j.Slf4j;
@@ -13,7 +14,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
-@Slf4j
 public class FactoryService {
     private final CurrenciesService currenciesService;
 
@@ -32,6 +32,9 @@ public class FactoryService {
     }
 
     public String getConvertStringBaseCode(String line) {
+        if (line.length() < 6) {
+            throw new BadRequestException("не указаны валюты");
+        }
         return line.substring(0, 3);
     }
 
@@ -69,7 +72,6 @@ public class FactoryService {
         return currencie;
     }
 
-
     public ExchangeRate convertExchangeDTOIntoExchange(ExchangeRateDTOResponce exchangeRateDTOResponce) {
 
     int base = currenciesService.findByCode(exchangeRateDTOResponce.getBaseCurrencyId()).getId();
@@ -81,5 +83,12 @@ public class FactoryService {
         exchangeRate.setTargetCurrencyId(target);
         exchangeRate.setRate(rate);
     return exchangeRate;
+    }
+
+    public String converter(double money) {
+        double a = money * 100;
+        int b = (int) a;
+
+        return b/100 + "." + b%100/10 + b%100%10;
     }
 }

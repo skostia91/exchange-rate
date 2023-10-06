@@ -2,6 +2,7 @@ package by.shylau.currenciesexchange.service;
 
 import by.shylau.currenciesexchange.model.Currencie;
 import by.shylau.currenciesexchange.repository.CurrenciesRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -9,6 +10,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
+@Transactional
 public class CurrenciesService {
     private final CurrenciesRepository currenciesRepository;
 
@@ -29,7 +31,6 @@ public class CurrenciesService {
         }
         return currencie;
     }
-
 
     public Currencie findByCode(String code) {
         return currenciesRepository.findByCode(code);

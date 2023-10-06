@@ -1,15 +1,7 @@
 package by.shylau.currenciesexchange.model;
 
-import by.shylau.currenciesexchange.service.CurrenciesService;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Max;
-import jakarta.validation.constraints.Min;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
-
-import java.util.Currency;
+import lombok.*;
 
 
 @Getter
@@ -17,19 +9,18 @@ import java.util.Currency;
 @NoArgsConstructor
 @Table(name = "exchange_rates")
 @Entity
+@EqualsAndHashCode
 @ToString
 public class ExchangeRate {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    //валюта которую меняют. foren key
     @Column(name = "base_currency_id")
-    private int baseCurrencyId;//уникальный
+    private int baseCurrencyId;
 
-    //валюта на которую поменяют. foren key
     @Column(name = "target_currency_id")
-    private int targetCurrencyId;//уникальный
+    private int targetCurrencyId;
 
     private Double rate;
 

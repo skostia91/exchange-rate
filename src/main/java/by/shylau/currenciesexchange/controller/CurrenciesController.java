@@ -2,12 +2,11 @@ package by.shylau.currenciesexchange.controller;
 
 import by.shylau.currenciesexchange.dto.CurrencyDTOResponce;
 import by.shylau.currenciesexchange.exception.BadRequestException;
-import by.shylau.currenciesexchange.exception.InternalServerException;
+import by.shylau.currenciesexchange.exception.ConflictException;
 import by.shylau.currenciesexchange.exception.NotFoundException;
 import by.shylau.currenciesexchange.model.Currencie;
 import by.shylau.currenciesexchange.service.CurrenciesService;
 import by.shylau.currenciesexchange.service.FactoryService;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,8 +17,8 @@ import java.util.List;
 @RestController
 @RequestMapping("/currencies")
 public class CurrenciesController {
-    private CurrenciesService currenciesService;
-    private FactoryService factoryService;
+    private final CurrenciesService currenciesService;
+    private final FactoryService factoryService;
 
     @Autowired
     public CurrenciesController(CurrenciesService currenciesService, FactoryService factoryService) {
@@ -35,16 +34,22 @@ public class CurrenciesController {
 
     @PostMapping()
     public ResponseEntity<Currencie> addCurrencies(CurrencyDTOResponce currencieDTO) {
+        if (currencieDTO.getCode() == null || currencieDTO.getName() == null ||
+        currencieDTO.getSign() == null) {
+            throw new BadRequestException("не корректно введены данные");
+        }
+        if (currencieDTO.getCode().equals(currenciesService.findByCode
+                (factoryService.convertCurrencyDTOIntoCurrency(currencieDTO).getCode()).getCode())) {
+            throw new ConflictException("валюта с таким кодом уже существует");
+        }
         currenciesService.addCurrencies(factoryService.convertCurrencyDTOIntoCurrency(currencieDTO));
-
 
         return new ResponseEntity<>(currenciesService.findById(currenciesService.findAll().size()), HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<Currencie> getCurrencyById(@PathVariable("id") int id) {
-        Currencie currencie = currenciesService.findById(id);
-        if(currencie == null) {
+        if(currenciesService.findById(id) == null) {
             throw new NotFoundException("нет в БД с id = " + id);
         }
         return new ResponseEntity<>(currenciesService.findById(id), HttpStatus.OK);
@@ -52,11 +57,12 @@ public class CurrenciesController {
 
     @GetMapping("/currency/{currency}")
     public ResponseEntity<Currencie> getCurrencyByCode(@PathVariable("currency") String code) {
-        if (code == null) {
+        if (code.isBlank()) {
             throw new BadRequestException("не корректно введена валюта");
         }
-        Currencie currencie = currenciesService.findById(id).orElseThrow(
-                () -> new NotFoundException("нет в БД с id = " + id)));
+        if (currenciesService.findByCode(code) == null) {
+            throw new NotFoundException("нет в БД с code = " + code);
+        }
         return new ResponseEntity<>(currenciesService.findByCode(code), HttpStatus.OK);
     }
 }

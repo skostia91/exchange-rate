@@ -11,9 +11,9 @@ import lombok.*;
 public class ExchangeRateDTORequest {
     private int id;
 
-    private Currencie baseCurrencyId;//уникальный
+    private Currencie baseCurrencyId;
 
-    private Currencie targetCurrencyId;//уникальный
+    private Currencie targetCurrencyId;
 
     private Double rate;
 }
