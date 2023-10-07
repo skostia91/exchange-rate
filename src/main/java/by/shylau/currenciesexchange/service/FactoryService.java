@@ -6,7 +6,6 @@ import by.shylau.currenciesexchange.dto.ExchangeRateDTOResponce;
 import by.shylau.currenciesexchange.exception.BadRequestException;
 import by.shylau.currenciesexchange.model.Currencie;
 import by.shylau.currenciesexchange.model.ExchangeRate;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -15,7 +14,10 @@ import java.util.List;
 
 @Service
 public class FactoryService {
-    private final CurrenciesService currenciesService;
+    private CurrenciesService currenciesService;
+
+    public FactoryService() {
+    }
 
     @Autowired
     public FactoryService(CurrenciesService currenciesService) {
@@ -25,8 +27,8 @@ public class FactoryService {
     public List<ExchangeRateDTORequest> getDTO(List<ExchangeRate> exchangeRateList) {
         List<ExchangeRateDTORequest> exchangeRateDTORequest = new ArrayList<>();
 
-        for (int i = 0; i < exchangeRateList.size(); i++) {
-            exchangeRateDTORequest.add(converterExchangeRateIntoExchangeRateDTO(exchangeRateList.get(i)));
+        for (ExchangeRate exchangeRate : exchangeRateList) {
+            exchangeRateDTORequest.add(converterExchangeRateIntoExchangeRateDTO(exchangeRate));
         }
         return exchangeRateDTORequest;
     }

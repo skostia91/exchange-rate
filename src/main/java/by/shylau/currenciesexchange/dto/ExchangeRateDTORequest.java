@@ -16,4 +16,9 @@ public class ExchangeRateDTORequest {
     private Currencie targetCurrencyId;
 
     private Double rate;
+
+    public ExchangeRateDTORequest(Currencie baseCurrencyId, Currencie targetCurrencyId) {
+        this.baseCurrencyId = baseCurrencyId;
+        this.targetCurrencyId = targetCurrencyId;
+    }
 }
