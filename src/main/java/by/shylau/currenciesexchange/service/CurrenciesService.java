@@ -36,6 +36,7 @@ public class CurrenciesService {
         return currenciesRepository.findByCode(code);
     }
 
+    @Transactional
     public void addCurrencies(Currencie currencie) {
         currenciesRepository.save(currencie);
     }

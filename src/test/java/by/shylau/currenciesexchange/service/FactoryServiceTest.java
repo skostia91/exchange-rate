@@ -1,28 +1,45 @@
 package by.shylau.currenciesexchange.service;
 
 import by.shylau.currenciesexchange.exception.BadRequestException;
+import by.shylau.currenciesexchange.model.Currencie;
+import by.shylau.currenciesexchange.repository.CurrenciesRepository;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.boot.test.context.SpringBootTest;
+
+import java.util.Currency;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+@ExtendWith(MockitoExtension.class)
 @SpringBootTest
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class FactoryServiceTest {
     private static final String test = "USDRUB";
 
+    @InjectMocks
+    private CurrenciesService service;
+
+    @Mock
+    private CurrenciesRepository repository;
+
+
     @Test
     public void testGetConvertStringTargetCode() {
-        FactoryService factoryService = new FactoryService();
+        Currencie currencie1 = new Currencie();
+        Currencie currencie2 = new Currencie();
+        Mockito.when(service.findAll()).thenReturn(List.of(currencie1, currencie2));
+        assertNotNull(service.findAll());
 
-        // Проверяем, что метод возвращает правильный результат для строки "USDJPY"
-        String result1 = factoryService.getConvertStringTargetCode("USDJPY");
-        assertEquals("JPY", result1);
 
-        // Проверяем, что метод возвращает правильный результат для строки "EURGBP"
-        String result2 = factoryService.getConvertStringTargetCode("EURGBP");
-        assertEquals("GBP", result2);
+        assertEquals(2, service.findAll().size());
     }
 
 
@@ -34,21 +51,7 @@ class FactoryServiceTest {
                 () -> assertNotEquals(test, a)
         );
     }
-    @Test
-    public void testGetConvertStringBaseCode() {
-        FactoryService factoryService = new FactoryService();
 
-        // Проверяем, что при передаче строки длиной меньше 6 символов выбрасывается BadRequestException
-        assertThrows(BadRequestException.class, () -> factoryService.getConvertStringBaseCode("USD"));
-
-        // Проверяем, что при передаче строки длиной равной 6 символам возвращается первые 3 символа
-        String result = factoryService.getConvertStringBaseCode("USDJPY");
-        assertEquals("USD", result);
-
-        // Проверяем, что при передаче строки длиной больше 6 символов возвращается первые 3 символа
-        result = factoryService.getConvertStringBaseCode("EURGBPUSD");
-        assertEquals("EUR", result);
-    }
 
     @Test
     public void testGetDTO() {

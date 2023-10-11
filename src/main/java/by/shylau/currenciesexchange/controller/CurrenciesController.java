@@ -30,6 +30,7 @@ public class CurrenciesController {
     public ResponseEntity<List<Currencie>> getCurrencies() {
         List<Currencie> currencies = currenciesService.findAll();
         return new ResponseEntity<>(currencies, HttpStatus.OK);
+
     }
 
     @PostMapping()

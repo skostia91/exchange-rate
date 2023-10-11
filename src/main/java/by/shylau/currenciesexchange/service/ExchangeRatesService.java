@@ -26,6 +26,7 @@ public class ExchangeRatesService {
         return exchangeRatesRepository.findByBaseCurrencyIdAndAndTargetCurrencyId(base, target);
     }
 
+    @Transactional
     public void add(ExchangeRate exchangeRate) {
         exchangeRatesRepository.save(exchangeRate);
     }

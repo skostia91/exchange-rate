@@ -16,9 +16,6 @@ import java.util.List;
 public class FactoryService {
     private CurrenciesService currenciesService;
 
-    public FactoryService() {
-    }
-
     @Autowired
     public FactoryService(CurrenciesService currenciesService) {
         this.currenciesService = currenciesService;
